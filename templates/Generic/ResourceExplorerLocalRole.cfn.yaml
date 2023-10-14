@@ -1,0 +1,54 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Create the IAM role to create/delete ResourceExplorerAggregator stack
+
+Resources:
+
+  CreateParameterRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: "ResourceExplorerLocalRole"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+              - "cloudformation.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Policies:
+        - PolicyName: "ResourceExplorerAggregatorPolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: ResourceExplorerStar
+                Effect: Allow
+                Action:
+                  - resource-explorer-2:GetIndex
+                  - resource-explorer-2:CreateIndex
+                  - resource-explorer-2:DeleteIndex
+                  - resource-explorer-2:TagResource
+                  - resource-explorer-2:ListTagsForResource
+                Resource: "*"
+              - Sid: ResourceExplorerIndex
+                Effect: Allow
+                Action:
+                  - resource-explorer-2:DeleteIndex
+                Resource:
+                  - !Sub "arn:${AWS::Partition}:resource-explorer-2:${AWS::Region}:${AWS::AccountId}:index/*"
+              - Sid: ServiceLinkedRole
+                Effect: Allow
+                Action: 
+                  - iam:CreateServiceLinkedRole
+                  - iam:DeleteServiceLinkedRole
+                  - iam:GetServiceLinkedRoleDeletionStatus
+                Resource: "arn:aws:iam::*:role/aws-service-role/resource-explorer-2.amazonaws.com/*"
+                Condition: 
+                  StringLike:
+                    "iam:AWSServiceName": "resource-explorer-2.amazonaws.com"
+              - Sid: AttachDetachServiceLinkedRole
+                Effect: Allow
+                Action: 
+                  - iam:AttachRolePolicy
+                  - iam:PutRolePolicy
+                Resource: "arn:aws:iam::*:role/aws-service-role/resource-explorer-2.amazonaws.com/*"

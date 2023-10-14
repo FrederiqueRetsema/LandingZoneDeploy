@@ -1,0 +1,9 @@
+---
+TemplateConfig:
+  Capabilities:
+  - CAPABILITY_NAMED_IAM
+  DeployTo:
+    Regions:
+    - MainRegion
+    Accounts:
+    - audit

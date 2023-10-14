@@ -1,0 +1,14 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Check if CloudFormation stacks are at drift, currently visible in AWS Config only, no actions yet
+
+Resources:
+  ConfigRuleCoudformationDrift:
+    Type: "AWS::Config::ConfigRule"
+    Properties:
+      ConfigRuleName: "CloudFormationStackDriftDetection"
+      InputParameters:
+        cloudformationRoleArn: !Sub "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/DriftDetectionExecutionRole"
+      Source: 
+        Owner: "AWS"
+        SourceIdentifier: "CLOUDFORMATION_STACK_DRIFT_DETECTION_CHECK"

@@ -1,0 +1,12 @@
+---
+TemplateConfig:
+  DependsOn:
+  - ConfigRuleCloudformationDriftRoles
+  Capabilities:
+  - CAPABILITY_NAMED_IAM
+  Role: ConfigRuleCloudformationDriftRole
+  DeployTo:
+    Regions:
+    - AllRegions
+    Accounts:
+    - NotMainAccount

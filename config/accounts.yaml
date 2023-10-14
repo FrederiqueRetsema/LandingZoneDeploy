@@ -1,0 +1,20 @@
+---
+Accounts:
+- Name: "development"
+  ProfileName: "fra-lz-test-dev"
+  Environment: "dev"
+  AccountId: "111111111111"
+- Name: "log-archive"
+  ProfileName: "fra-lz-test-log-archive"
+  Environment: "prod"
+  AccountId: "222222222222"
+- Name: "audit" 
+  ProfileName: "fra-lz-test-audit"
+  Environment: "prod"
+  AccountId: "333333333333"
+- Name: "master"
+  ProfileName: "fra-lz-test-master"
+  Environment: "prod"
+  AccountId: "999999999999"
+
+

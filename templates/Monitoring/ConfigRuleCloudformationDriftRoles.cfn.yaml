@@ -1,0 +1,84 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Create the IAM role to create/delete ConfigRuleCloudformationDrift stack
+
+Resources:
+
+  ConfigRuleCloudformationDriftRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: "ConfigRuleCloudformationDriftRole"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+              - "cloudformation.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Policies:
+        - PolicyName: "ConfigRuleCloudformationDriftPolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: AWSConfig
+                Effect: Allow
+                Action:
+                  - config:DescribeConfigRules
+                  - config:PutConfigRule
+                  - config:DeleteConfigRule
+                Resource: !Sub "arn:${AWS::Partition}:config:*:${AWS::AccountId}:config-rule/*"
+              - Sid: AWSConfigDescribe
+                Effect: Allow
+                Action:
+                  - config:DescribeConfigRules
+                Resource: "*"
+              - Sid: IAMList
+                Effect: Allow
+                Action:
+                  - iam:ListRoles
+                Resource: "*"
+              - Sid: IAM
+                Effect: Allow
+                Action:
+                  - iam:GetRole
+                  - iam:CreateRole
+                  - iam:GetRolePolicy
+                  - iam:PutRolePolicy
+                  - iam:AttachRolePolicy
+                  - iam:DetachRolePolicy
+                  - iam:TagRole
+                  - iam:PassRole
+                  - iam:DeleteRole
+                  - iam:DeleteRolePolicy
+                Resource: !GetAtt DriftDetectionExecutionRole.Arn
+
+  DriftDetectionExecutionRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: "DriftDetectionExecutionRole"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+              - "config.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - !Sub "arn:${AWS::Partition}:iam::aws:policy/ReadOnlyAccess"
+      Policies:
+        - PolicyName: "DriftDetectionExecutionRolePolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: CloudFormatiom
+                Effect: "Allow"
+                Action: 
+                  - "cloudformation:DetectStackDrift"
+                  - "cloudformation:DetectStackResourceDrift"
+                  - "cloudformation:BatchDescribeTypeConfigurations"
+                Resource: "*"
+      Path: /
+                

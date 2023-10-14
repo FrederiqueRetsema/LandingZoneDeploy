@@ -1,0 +1,27 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Test Landing Zone by adding one bucket that might have dependencies in other accounts
+
+Resources:
+  LoggingBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: frederique20231007
+      
+  LoggingBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref LoggingBucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Sid: AllowDevelopersToHaveReadAccess
+          Effect: "Allow"
+          Action:
+            - s3:GetObject
+            - s3:ListBucket
+          Resource:
+            - !Sub "arn:${AWS::Partition}:s3:::${LoggingBucket}"
+            - !Sub "arn:${AWS::Partition}:s3:::${LoggingBucket}/*"
+          Principal:
+            "AWS": !Sub "arn:${AWS::Partition}:iam::{development}:root"

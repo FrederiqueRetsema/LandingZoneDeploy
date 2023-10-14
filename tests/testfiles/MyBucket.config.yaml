@@ -1,0 +1,10 @@
+---
+TemplateConfig:
+  DependsOn:
+  - MyBucketRole
+  Role: MyBucketRole
+  DeployTo:
+    Regions:
+    - eu-central-1
+    Accounts:
+    - development

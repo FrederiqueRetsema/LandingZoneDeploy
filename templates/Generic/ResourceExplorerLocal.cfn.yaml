@@ -1,0 +1,9 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Enable Resource Explorer
+
+Resources:
+  ResourceExplorerIndex:
+    Type: AWS::ResourceExplorer2::Index
+    Properties:
+      Type: LOCAL

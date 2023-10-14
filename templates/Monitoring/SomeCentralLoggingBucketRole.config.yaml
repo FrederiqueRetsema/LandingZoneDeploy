@@ -1,0 +1,9 @@
+---
+TemplateConfig:
+  Capabilities:
+  - CAPABILITY_NAMED_IAM
+  DeployTo:
+    Regions:
+    - eu-central-1
+    Accounts:
+    - log-archive

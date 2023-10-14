@@ -1,0 +1,18 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Enable Resource Explorer
+
+Resources:
+  ResourceExplorerIndex:
+    Type: AWS::ResourceExplorer2::Index
+    Properties:
+      Type: AGGREGATOR
+  ResourceExplorerView:
+    DependsOn: ResourceExplorerIndex
+    Type: AWS::ResourceExplorer2::View
+    Properties:
+      ViewName: "AllResources" 
+  ResourceExplorerDefaultViewAssociation:
+    Type: AWS::ResourceExplorer2::DefaultViewAssociation
+    Properties:
+      ViewArn: !Ref ResourceExplorerView

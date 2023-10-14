@@ -1,0 +1,12 @@
+---
+TemplateConfig:
+  DependsOn:
+  - ReportOnSignInOnAccountsAuditRole
+  Capabilities:
+  - CAPABILITY_NAMED_IAM
+  Role: ReportOnSignInOnAccountsAuditRole
+  DeployTo:
+    Regions:
+    - MainRegion
+    Accounts:
+    - audit

@@ -1,0 +1,9 @@
+---
+Accounts:
+- Name: "development"
+  ProfileName: "my-dev"
+  Environment: "dev"
+  AccountId: "111111111111"
+- Name: "master"
+  Environment: "prod"
+  AccountId: "999999999999"

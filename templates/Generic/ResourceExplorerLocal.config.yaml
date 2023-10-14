@@ -1,0 +1,10 @@
+---
+TemplateConfig:
+  DependsOn:
+  - "ResourceExplorerLocalRole"
+  Role: "ResourceExplorerLocalRole"
+  DeployTo:
+    Regions:
+    - NotMainRegion
+    Accounts:
+    - "AllAccounts"

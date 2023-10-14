@@ -1,0 +1,82 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Create the IAM role to create/delete ReportOnSignInOnAccountsAudit stack
+
+Resources:
+
+  ReportOnSignInOnAccountsAuditRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: "ReportOnSignInOnAccountsAuditRole"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+              - "cloudformation.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Policies:
+        - PolicyName: "ReportOnSignInOnAccountsAuditPolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: IAMList
+                Effect: Allow
+                Action:
+                  - iam:ListRoles
+                Resource: "*"
+              - Sid: IAM
+                Effect: Allow
+                Action:
+                  - iam:GetRole
+                  - iam:CreateRole
+                  - iam:GetRolePolicy
+                  - iam:PutRolePolicy
+                  - iam:TagRole
+                  - iam:PassRole
+                  - iam:DeleteRole
+                  - iam:DeleteRolePolicy
+                Resource: !Sub "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/FilterConsoleSigninExecutionRole"
+              - Sid: SNSAdminTopic
+                Effect: Allow
+                Action:
+                  - sns:CreateTopic
+                  - sns:GetTopicAttributes
+                  - sns:GetDataProtectionPolicy
+                  - sns:ListSubscriptionsByTopic
+                  - sns:DeleteTopic
+                  - sns:TagResource
+                  - sns:Subscribe
+                  - sns:Unsubscribe
+                Resource: !Sub "arn:${AWS::Partition}:sns:${AWS::Region}:${AWS::AccountId}:admin-topic-email"
+              - Sid: SNSControlTowerTopic
+                Effect: Allow
+                Action:
+                  - sns:Subscribe
+                  - sns:Unsubscribe
+                Resource: !Sub "arn:${AWS::Partition}:sns:${AWS::Region}:${AWS::AccountId}:aws-controltower-AllConfigNotifications"
+              - Sid: Lambda
+                Effect: Allow
+                Action:
+                  - lambda:GetFunction
+                  - lambda:CreateFunction
+                  - lambda:DeleteFunction
+                  - lambda:AddPermission
+                  - lambda:RemovePermission
+                  - lambda:TagResource
+                Resource: 
+                  - !Sub "arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:FilterConsoleSigninFunction"
+              - Sid: CloudWatch
+                Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:PutRetentionPolicy
+                  - logs:DeleteLogGroup
+                  - logs:TagLogGroup
+                  - logs:CreateLogStream
+                  - logs:DeleteLogStream
+                  - logs:TagResource
+                Resource: 
+                  - !Sub "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/FilterConsoleSigninFunction:log-stream:"
+                  - !Sub "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/FilterConsoleSigninFunction:log-stream:*"

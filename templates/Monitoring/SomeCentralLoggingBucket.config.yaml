@@ -1,0 +1,10 @@
+---
+TemplateConfig:
+  DependsOn:
+  - SomeCentralLoggingBucketRole
+  Role: SomeCentralLoggingBucketRole
+  DeployTo:
+    Regions:
+    - eu-central-1
+    Accounts:
+    - log-archive

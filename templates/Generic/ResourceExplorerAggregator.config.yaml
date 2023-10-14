@@ -1,0 +1,10 @@
+---
+TemplateConfig:
+  DependsOn:
+  - "ResourceExplorerAggregatorRole"
+  Role: "ResourceExplorerAggregatorRole"
+  DeployTo:
+    Regions:
+    - MainRegion
+    Accounts:
+    - "AllAccounts"

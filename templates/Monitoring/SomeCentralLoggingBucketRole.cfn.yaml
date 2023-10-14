@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Create the IAM role to create/delete CentralLoggingBucket stack
+
+Resources:
+
+  CreateParameterRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: "SomeCentralLoggingBucketRole"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+              - "cloudformation.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Policies:
+        - PolicyName: "SomeCentralLoggingBucketRolePolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: S3
+                Effect: Allow
+                Action:
+                  - s3:CreateBucket
+                  - s3:DeleteBucket
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:GetBucketPolicy
+                  - s3:PutBucketPolicy
+                  - s3:DeleteBucketPolicy
+                  - s3:PutBucketTagging
+                Resource: 
+                  - "arn:aws:s3:::frederique20231007"
+                  - "arn:aws:s3:::frederique20231007/*"

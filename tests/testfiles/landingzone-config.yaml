@@ -1,0 +1,18 @@
+---
+LandingZoneConfig:
+  MaxConcurrentAccounts: 1
+  MaxConcurrentStacksPerAccount: 2
+  WaitTimeInSec: 5
+
+  # Logging: can be "Debug", "Info"
+  Logging: "Info"
+
+  GroupNameAllAccounts: "AllAccounts"
+  GroupNameAllRegions: "AllRegions"
+
+  Tags:
+  - Key: "LandingZoneResource"
+    Value: "True"
+  AddTags:
+  - Key: "Department"
+    Value: "ICT"

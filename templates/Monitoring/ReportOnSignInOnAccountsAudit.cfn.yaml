@@ -1,0 +1,101 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Report on sign in in AWS accounts, see also https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-aws-console-sign-in-events.html
+
+Parameters:
+  AdminEmailAddress:
+    Type: String
+    Default: test@retsema.eu
+  RetentionPeriodLogGroups:
+    Type: Number
+    Default: 7
+  SNSTopicName:
+    Type: String
+    Default: aws-controltower-AllConfigNotifications
+
+Resources:
+  AdminTopicMail:
+    Type: AWS::SNS::Topic
+    DeletionPolicy: Delete
+    Properties:
+      TopicName: "admin-topic-email"
+      Subscription: 
+        - Endpoint: !Ref AdminEmailAddress
+          Protocol: email
+
+  # Mind: this is the subscription on the original ControlTower topic, not on the administrator topic we just created
+  TopicSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: !Sub "arn:${AWS::Partition}:sns:${AWS::Region}:${AWS::AccountId}:${SNSTopicName}"
+      Protocol: lambda
+      Endpoint: !GetAtt FilterConsoleSigninFunction.Arn
+
+  FilterConsoleSigninInvokeAllow:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt FilterConsoleSigninFunction.Arn
+      Action: lambda:Invoke
+      Principal: sns.amazonaws.com
+      SourceArn: !Sub "arn:${AWS::Partition}:sns:${AWS::Region}:${AWS::AccountId}:${SNSTopicName}"
+
+  FilterConsoleSigninLogGroup:
+    Type: AWS::Logs::LogGroup
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+    Properties:
+      LogGroupName: "/aws/lambda/FilterConsoleSigninFunction"
+      RetentionInDays: !Ref RetentionPeriodLogGroups
+
+  FilterConsoleSigninExecutionRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: "FilterConsoleSigninExecutionRole"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+              - "lambda.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Policies:
+        - PolicyName: "FilterConsoleSigninExecutionRolePolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: CloudWatchLogs
+                Effect: "Allow"
+                Action: 
+                  - "logs:PutLogEvents"
+                  - "logs:CreateLogStream"
+                Resource: "*"
+              - Sid: SendToSNS
+                Effect: Allow
+                Action:
+                  - sns:Publish
+                Resource: !GetAtt AdminTopicMail.TopicArn
+      Path: /
+
+  FilterConsoleSigninFunction:
+    DependsOn: 
+    - FilterConsoleSigninLogGroup
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: "FilterConsoleSigninFunction"
+      Handler: index.lambda_handler
+      Role: !GetAtt FilterConsoleSigninExecutionRole.Arn
+      Timeout: 60
+      Code:
+        ZipFile: |
+          #!/usr/bin/env python
+
+          # Main
+          # ====
+
+          def lambda_handler(event, context):
+            print(event)
+
+            return
+      Runtime: python3.11

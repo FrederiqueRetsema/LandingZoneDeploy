@@ -1,0 +1,32 @@
+---
+Groups:
+- Name: AllRegions
+  List:
+    - "eu-west-1"
+    - "eu-central-1"
+    - "us-east-1"
+
+- Name: AllAccounts
+  List:
+    - "development"
+    - "log-archive"
+    - "audit"
+    - "master"
+
+# Derivations from the main groups above
+
+- Name: MainRegion
+  List:
+    - "eu-central-1"
+
+- Name: NotMainRegion
+  List:
+    - "AllRegions"
+  Except:
+    - "MainRegion"
+
+- Name: NotMainAccount
+  List:
+    - "AllAccounts"
+  Except:
+    - "master"
